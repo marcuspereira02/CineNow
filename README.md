@@ -8,7 +8,9 @@ Funcionalidades
 
 ## :camera_flash: Screenshots
 <!-- You can add more screenshots here if you like -->
-<img src="https://github.com/ComunidadeDevSpace/CineNow/assets/11612508/9690f66d-fb65-4cd7-82db-954473cb6c2d" width=260/> <img src="https://github.com/ComunidadeDevSpace/CineNow/assets/11612508/f8006a40-8855-4d6f-b9b9-a44a8c991fe1" width=260/>
+<img src="https://github.com/user-attachments/assets/f584586a-1ed9-4360-a24b-5a869745a8bb" width=260/> <img src="https://github.com/user-attachments/assets/a762ae98-f375-444d-b113-0246d5c4986b" width=260/>
+
+
 
 
 ## Tecnologias
