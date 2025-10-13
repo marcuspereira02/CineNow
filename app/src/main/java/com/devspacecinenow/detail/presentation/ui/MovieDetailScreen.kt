@@ -29,14 +29,18 @@ import coil.compose.AsyncImage
 import com.devspacecinenow.ApiService
 import com.devspacecinenow.common.model.MovieDto
 import com.devspacecinenow.common.data.RetrofitClient
+import com.devspacecinenow.detail.presentation.MovieDetailViewModel
 import com.devspacecinenow.ui.theme.CineNowTheme
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 @Composable
-fun MovieDetailScreen(movieId: String,
-                      navHostController: NavHostController) {
+fun MovieDetailScreen(
+    movieId: String,
+    navHostController: NavHostController,
+    detailViewModel: MovieDetailViewModel
+) {
     var movieDto by remember { mutableStateOf<MovieDto?>(null) }
 
     val apiService = RetrofitClient.retrofitInstance.create(ApiService::class.java)
