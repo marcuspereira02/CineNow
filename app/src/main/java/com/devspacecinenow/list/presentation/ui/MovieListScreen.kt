@@ -1,4 +1,4 @@
-package com.devspacecinenow
+package com.devspacecinenow.list.presentation.ui
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -29,6 +29,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.devspacecinenow.common.model.MovieDto
+import com.devspacecinenow.common.model.MovieResponse
+import com.devspacecinenow.common.data.RetrofitClient
+import com.devspacecinenow.list.data.ListService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,12 +44,12 @@ fun MovieListScreen(navController: NavHostController) {
     var topRatedMovies by remember { mutableStateOf<List<MovieDto>>(emptyList()) }
     var upcomingMovies by remember { mutableStateOf<List<MovieDto>>(emptyList()) }
 
-    val apiService = RetrofitClient.retrofitInstance.create(ApiService::class.java)
+    val listService = RetrofitClient.retrofitInstance.create(ListService::class.java)
 
-    val callNowPlaying = apiService.getNowPlayingMovies()
-    val callPopular = apiService.getPopularMovies()
-    val callTopRated = apiService.getTopRatedMovies()
-    val callUpcoming = apiService.getUpcomingMovies()
+    val callNowPlaying = listService.getNowPlayingMovies()
+    val callPopular = listService.getPopularMovies()
+    val callTopRated = listService.getTopRatedMovies()
+    val callUpcoming = listService.getUpcomingMovies()
 
     callNowPlaying.enqueue(object : Callback<MovieResponse> {
         override fun onResponse(
