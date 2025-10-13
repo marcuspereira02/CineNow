@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.devspacecinenow.detail.presentation.ui.MovieDetailScreen
+import com.devspacecinenow.list.presentation.ui.MovieListScreen
 
 @Composable
 fun CineNowApp() {
@@ -21,7 +23,7 @@ fun CineNowApp() {
             })
         ){ backStackEntry->
             val movieId = requireNotNull( backStackEntry.arguments?.getString("itemId"))
-            MovieDetailScreen(movieId, navController )
+            MovieDetailScreen(movieId, navController)
         }
     }
 }
