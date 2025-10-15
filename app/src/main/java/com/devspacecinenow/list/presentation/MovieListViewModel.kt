@@ -69,7 +69,6 @@ class MovieListViewModel(
                 Log.d("MovieListViewModel", "Request Error :: ${response.errorBody()}")
             }
         }
-
     }
 
     private fun fetchPopular() {
@@ -112,7 +111,6 @@ class MovieListViewModel(
                     listService
                 ) as T
             }
-
         }
     }
 }

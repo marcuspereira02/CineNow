@@ -12,9 +12,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MovieDetailViewModel(
     private val detailService: DetailService
@@ -23,35 +20,19 @@ class MovieDetailViewModel(
     private val _uiMovieDto = MutableStateFlow<MovieDto?>(null)
     val uiMovieDto: StateFlow<MovieDto?> = _uiMovieDto
 
-
-     fun fetchMovieDetail(movieId: String) {
-        if (_uiMovieDto.value == null) {
-            detailService.getMovieById(movieId).enqueue(object : Callback<MovieDto> {
-                override fun onResponse(
-                    call: Call<MovieDto?>,
-                    response: Response<MovieDto?>
-                ) {
-                    if (response.isSuccessful) {
-                        _uiMovieDto.value = response.body()
-                    } else {
-                        Log.d("MovieDetailScreen", "Request Error :: ${response.errorBody()}")
-                    }
-                }
-
-                override fun onFailure(
-                    call: Call<MovieDto?>,
-                    t: Throwable
-                ) {
-                    Log.d("MovieDetailScreen", "Network Error :: ${t.message}")
-                }
-
-            })
+    fun fetchMovieDetail(movieId: String) {
+        viewModelScope.launch {
+            val response = detailService.getMovieById(movieId)
+            if (response.isSuccessful) {
+                _uiMovieDto.value = response.body()
+            } else {
+                Log.d("MovieDetailScreen", "Request Error :: ${response.errorBody()}")
+            }
         }
-
     }
 
-    fun cleanMovieId(){
-        viewModelScope.launch{
+    fun cleanMovieId() {
+        viewModelScope.launch {
             delay(1000)
             _uiMovieDto.value = null
         }
