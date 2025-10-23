@@ -14,11 +14,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.devspacecinenow.common.model.MovieDto
 import com.devspacecinenow.list.presentation.MovieListViewModel
 
 @Composable
@@ -42,8 +43,8 @@ fun MovieListScreen(
     MovieListContent(
         topRatedMovies = topRatedMovies,
         nowPlayingMovies = nowPlayingMovies,
-        upcomingMovies = upcomingMovies,
-        popularMovies = popularMovies
+        popularMovies = popularMovies,
+        upcomingMovies = upcomingMovies
     ) { itemClicked ->
         navController.navigate(route = "movieDetail/${itemClicked.id}")
     }
@@ -51,11 +52,11 @@ fun MovieListScreen(
 
 @Composable
 private fun MovieListContent(
-    topRatedMovies: List<MovieDto>,
-    nowPlayingMovies: List<MovieDto>,
-    upcomingMovies: List<MovieDto>,
-    popularMovies: List<MovieDto>,
-    onClick: (MovieDto) -> Unit
+    topRatedMovies: MovieListUiState,
+    nowPlayingMovies: MovieListUiState,
+    popularMovies: MovieListUiState,
+    upcomingMovies: MovieListUiState,
+    onClick: (MovieUiData) -> Unit
 
 ) {
 
@@ -65,30 +66,39 @@ private fun MovieListContent(
             .verticalScroll(rememberScrollState())
     ) {
         Text(
-            modifier = Modifier.padding(8.dp),
-            fontSize = 40.sp,
-            fontWeight = FontWeight.SemiBold,
-            text = "CineNow"
+            text = "CineNow",
+            fontSize = 34.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier
+                .padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
+        )
+
+        Divider(
+            color = Color.LightGray.copy(alpha = 0.3f),
+            thickness = 1.dp,
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
         )
 
         MovieSession(
-            label = "Top rated",
+            label = "⭐ Top rated",
             topRatedMovies,
             onClick = onClick
         )
 
         MovieSession(
-            label = "Now playing", nowPlayingMovies, onClick = onClick
+            label = "\uD83C\uDFAC Now playing",
+            nowPlayingMovies,
+            onClick = onClick
         )
 
         MovieSession(
-            label = "Popular",
+            label = "\uD83D\uDD25 Popular",
             popularMovies,
             onClick = onClick
         )
 
         MovieSession(
-            label = "Upcoming",
+            label = "⏳ Upcoming",
             upcomingMovies,
             onClick = onClick
         )
@@ -96,32 +106,59 @@ private fun MovieListContent(
 }
 
 @Composable
-private fun MovieSession(label: String, movieList: List<MovieDto>, onClick: (MovieDto) -> Unit) {
+private fun MovieSession(
+    label: String,
+    movieListUiState: MovieListUiState,
+    onClick: (MovieUiData) -> Unit
+) {
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(end = 8.dp, start = 8.dp)
     ) {
 
         Text(
-            fontSize = 24.sp, text = label, fontWeight = FontWeight.SemiBold
+            fontSize = 22.sp, text = label, fontWeight = FontWeight.SemiBold
         )
         Spacer(modifier = Modifier.size(8.dp))
-        MovieList(movieList = movieList, onClick = onClick)
+
+        if (movieListUiState.isLoading) {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = "Loading...",
+                fontSize = 16.sp
+            )
+            return
+
+        } else if (movieListUiState.isError) {
+            Text(
+                color = Color.Red,
+                text = movieListUiState.errorMessage ?: "",
+                fontWeight = FontWeight.SemiBold
+            )
+
+        } else {
+            MovieList(movieList = movieListUiState.list, onClick = onClick)
+        }
+        Divider(
+            color = Color.LightGray.copy(alpha = 0.3f),
+            thickness = 1.dp,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
     }
 }
 
 
 @Composable
 private fun MovieList(
-    movieList: List<MovieDto>, onClick: (MovieDto) -> Unit
+    movieList: List<MovieUiData>, onClick: (MovieUiData) -> Unit
 ) {
 
     LazyRow {
         items(movieList) {
             MovieItem(
-                movieDto = it, onClick = onClick
+                movieUiData = it, onClick = onClick
             )
         }
 
@@ -130,13 +167,13 @@ private fun MovieList(
 
 @Composable
 private fun MovieItem(
-    movieDto: MovieDto, onClick: (MovieDto) -> Unit
+    movieUiData: MovieUiData, onClick: (MovieUiData) -> Unit
 ) {
     Column(
         modifier = Modifier
             .width(IntrinsicSize.Min)
             .clickable {
-                onClick.invoke(movieDto)
+                onClick.invoke(movieUiData)
             }) {
         AsyncImage(
             modifier = Modifier
@@ -144,20 +181,20 @@ private fun MovieItem(
                 .width(120.dp)
                 .height(150.dp),
             contentScale = ContentScale.Crop,
-            model = movieDto.posterFullPath,
-            contentDescription = "${movieDto.title} Poster image"
+            model = movieUiData.image,
+            contentDescription = "${movieUiData.title} Poster image"
         )
         Spacer(modifier = Modifier.size(4.dp))
         Text(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             fontWeight = FontWeight.SemiBold,
-            text = movieDto.title
+            text = movieUiData.title
         )
         Text(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            text = movieDto.overview
+            text = movieUiData.overview
 
         )
     }
