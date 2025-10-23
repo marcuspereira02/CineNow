@@ -34,7 +34,7 @@ O projeto foi desenvolvido seguindo **boas práticas de arquitetura Android**, g
   - Compose Preview, NavHostController, AsyncImage  
 - **Networking:** Retrofit + OkHttp3  
 - **API:** TMDB API  
-- **Gerenciamento de Estado:** ViewModel + StateFlow
+- **Gerenciamento de Estado:** ViewModel
 
 ---
 
